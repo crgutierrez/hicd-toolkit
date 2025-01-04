@@ -180,7 +180,14 @@
         });
     }
 
-
+    const getInfoPaciente = function () {
+        const registro = extractValor($('#Conteudo > div:nth-child(12) > div > div >  #pac_box > div > div.col-lg-3 > p:nth-child(1)').text());
+        const nome = extractValor($('#Conteudo > div:nth-child(12) > div > div >  #pac_box > div > div.col-lg-3 > p:nth-child(2)').text());
+        const leito = extrairEnfermaria($('#pac_box > div > div:nth-child(3) > p:nth-child(1) > b:nth-child(2)').text());
+        const dataNascimento = extrairData($('#pac_box > div > div:nth-child(3) > p:nth-child(2)').text());
+        const idade = extrairIdade($('#pac_box > div > div:nth-child(3) > p:nth-child(2)').text());
+        return new Paciente(registro, nome, dataNascimento, idade, leito);
+    }
 
     const novoPaciente = function getPaciente(pront) {
         $("#Conteudo").show();

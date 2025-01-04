@@ -38,10 +38,13 @@ function extrairData(texto) {
 
 function extrairIdade(texto) {
     // Usa uma expressão regular para capturar o número antes da palavra "anos"
-    const match = texto.match(/Idade:\s*(\d+)\s*anos/);
-
+//    const match = texto.match(/Idade:\s*(\d+)\s*anos/);
+    const match = texto.match(/\d{2}\/\d{2}\/\d{4}/);
+    if(match){
+        return calcularIdade(match[0]);
+    }
     // retornar valor em string
-    return match ? match[1] : null; // Retorna o número como inteiro ou null
+    return null; // Retorna o número como inteiro ou null
     //   return match ? parseInt(match[1], 10) : null; // Retorna o número como inteiro ou null
 }
 
@@ -54,13 +57,33 @@ class Paciente {
         this.leito = leito;
     }
 }
-const getInfoPaciente = function () {
-    const registro = extractValor($('#Conteudo > div:nth-child(12) > div > div >  #pac_box > div > div.col-lg-3 > p:nth-child(1)').text());
-    const nome = extractValor($('#Conteudo > div:nth-child(12) > div > div >  #pac_box > div > div.col-lg-3 > p:nth-child(2)').text());
-    const leito = extrairEnfermaria($('#pac_box > div > div:nth-child(3) > p:nth-child(1) > b:nth-child(2)').text());
-    const dataNascimento = extrairData($('#pac_box > div > div:nth-child(3) > p:nth-child(2)').text());
-    const idade = extrairIdade($('#pac_box > div > div:nth-child(3) > p:nth-child(2)').text());
-    return new Paciente(registro, nome, dataNascimento, idade, leito);
+function calcularIdade(dataTexto) {
+    // Converte o texto para um objeto Date
+    const [dia, mes, ano] = dataTexto.split('/').map(Number);
+    const dataNascimento = new Date(ano, mes - 1, dia);
+    const hoje = new Date();
+
+    // Calcula a diferença em milissegundos
+    const diferencaTempo = hoje - dataNascimento;
+
+    if (diferencaTempo < 0) {
+        return "Data inválida"; // Verifica se a data de nascimento é no futuro
+    }
+
+    // Calcula dias, meses e anos
+    const dias = Math.floor(diferencaTempo / (1000 * 60 * 60 * 24));
+    const anos = hoje.getFullYear() - dataNascimento.getFullYear();
+    const meses = hoje.getMonth() - dataNascimento.getMonth() + (anos * 12);
+    const mesesAjustados = (meses % 12 + 12) % 12; // Ajusta para valores corretos
+
+    if (dias < 30) {
+        return `${dias} dias`; // Menor de 30 dias
+    } else if (anos < 2) {
+        const anosParciais = Math.floor(meses / 12);
+        return `${anosParciais} ano${anosParciais === 1 ? '' : 's'} e ${mesesAjustados} mês${mesesAjustados === 1 ? '' : 'es'}`;
+    } else {
+        return `${anos} ano${anos === 1 ? '' : 's'}`; // Maior ou igual a 2 anos
+    }
 }
 function syncPaciente(paciente) {
     console.log('Sincronizando paciente', paciente);
