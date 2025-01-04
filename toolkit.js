@@ -7,6 +7,7 @@
 // @match       https://hicd-hospub.sesau.ro.gov.br/prontuario/frontend/index.php
 // @grant        GM_xmlhttpRequest
 // @grant        unsafeWindow
+// @require     https://raw.githubusercontent.com/crgutierrez/hicd-toolkit/refs/heads/main/utils.js
 // @require      https://code.jquery.com/jquery-3.6.0.min.js
 // @require      https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js
 // @resource     bootstrapCSS https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css
@@ -58,7 +59,6 @@
         // Adiciona o título do card
         const cardTitle = $('<h3>').addClass('panel-title').text(title);
 
-
         // Adiciona o texto do card
         const cardText = $('<p>').addClass('card-text').text(text);
         const footer = $('<div>').addClass('panel-footer').attr('id', idCard + 'Footer');
@@ -85,16 +85,6 @@
         // Adiciona o card ao corpo da página
         $(idContainer).append(cardContainer);
         contentCallback.apply();
-    }
-
-
-    const getInfoPaciente = function () {
-        const registro = extractValor($('#Conteudo > div:nth-child(12) > div > div >  #pac_box > div > div.col-lg-3 > p:nth-child(1)').text());
-        const nome = extractValor($('#Conteudo > div:nth-child(12) > div > div >  #pac_box > div > div.col-lg-3 > p:nth-child(2)').text());
-        const leito = extrairEnfermaria($('#pac_box > div > div:nth-child(3) > p:nth-child(1) > b:nth-child(2)').text());
-        const dataNascimento = extrairData($('#pac_box > div > div:nth-child(3) > p:nth-child(2)').text());
-        const idade = extrairIdade($('#pac_box > div > div:nth-child(3) > p:nth-child(2)').text());
-        return new Paciente(registro, nome, dataNascimento, idade, leito);
     }
 
     const novoRegeMenu = function (ParamModule, IdPac, aba, edit, param, TIPOBUSCA, position, title) {
@@ -190,51 +180,7 @@
         });
     }
 
-    function syncPaciente(paciente) {
-        console.log('Sincronizando paciente', paciente);
-        console.log(JSON.stringify(paciente));
 
-        ajaxPost("https://hicd-backend.fly.dev/pacientes", paciente, function (response) {
-            console.log(response);
-            alert('paciente sincronizado: ' + paciente.nome);
-        }, function (e) {
-            console.log(e);
-        });
-
-        // Fazer a sincronização com o sistema extern
-        /*unsafeWindow.GM_xmlhttpRequest({
-            method: "POST",
-            url: "https://hicd-backend.fly.dev/pacientes",
-            data: JSON.stringify(paciente),
-            headers: {
-                "Content-Type": "application/json"
-            },
-            onload: function (response) {
-                console.log(response.responseText);
-                alert('paciente sincronizado: ' + paciente.nome);
-            }
-
-        }); */
-
-    }
-
-    function ajaxPost(url, data, loadCallback, errorCallback) {
-        unsafeWindow.GM_xmlhttpRequest({
-            method: "POST",
-            url: url,
-            data: JSON.stringify(data),
-            headers: {
-                "Content-Type": "application/json"
-            },
-            onload: function (response) {
-                loadCallback.apply(response);
-            },
-            error: function (e) {
-                error.apply(e);
-            },
-
-        });
-    }
 
     const novoPaciente = function getPaciente(pront) {
         $("#Conteudo").show();
