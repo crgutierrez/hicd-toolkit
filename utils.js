@@ -85,33 +85,7 @@ function calcularIdade(dataTexto) {
         return `${anos} ano${anos === 1 ? '' : 's'}`; // Maior ou igual a 2 anos
     }
 }
-function syncPaciente(paciente) {
-    console.log('Sincronizando paciente', paciente);
-    console.log(JSON.stringify(paciente));
 
-    ajaxPost("https://hicd-backend.fly.dev/pacientes", paciente, function (response) {
-        console.log(response);
-        alert('paciente sincronizado: ' + paciente.nome);
-    }, function (e) {
-        console.log(e);
-    });
-
-    // Fazer a sincronização com o sistema extern
-    /*unsafeWindow.GM_xmlhttpRequest({
-        method: "POST",
-        url: "https://hicd-backend.fly.dev/pacientes",
-        data: JSON.stringify(paciente),
-        headers: {
-            "Content-Type": "application/json"
-        },
-        onload: function (response) {
-            console.log(response.responseText);
-            alert('paciente sincronizado: ' + paciente.nome);
-        }
-
-    }); */
-
-}
 
 function ajaxPost(url, data, loadCallback, errorCallback) {
     unsafeWindow.GM_xmlhttpRequest({

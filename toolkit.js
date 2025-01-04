@@ -188,6 +188,34 @@
         const idade = extrairIdade($('#pac_box > div > div:nth-child(3) > p:nth-child(2)').text());
         return new Paciente(registro, nome, dataNascimento, idade, leito);
     }
+    function syncPaciente(paciente) {
+        console.log('Sincronizando paciente', paciente);
+        console.log(JSON.stringify(paciente));
+
+        ajaxPost("https://hicd-backend.fly.dev/pacientes", paciente, function (response) {
+            console.log(response);
+            alert('paciente sincronizado: ' + paciente.nome);
+        }, function (e) {
+            console.log(e);
+        });
+
+
+        // Fazer a sincronização com o sistema extern
+        /*unsafeWindow.GM_xmlhttpRequest({
+            method: "POST",
+            url: "https://hicd-backend.fly.dev/pacientes",
+            data: JSON.stringify(paciente),
+            headers: {
+                "Content-Type": "application/json"
+            },
+            onload: function (response) {
+                console.log(response.responseText);
+                alert('paciente sincronizado: ' + paciente.nome);
+            }
+
+        }); */
+
+    }
 
     const novoPaciente = function getPaciente(pront) {
         $("#Conteudo").show();
